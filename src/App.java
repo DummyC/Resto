@@ -30,7 +30,7 @@ public class App {
 
     static void listMenu() {
         clearScreen();
-        System.out.println("Welcome to Dummy's Resto, " + customerName);
+        System.out.println("Welcome, " + customerName);
         System.out.println("Select your desired items in our menu below\n");
 
         for(int i = 0; i < 10; i++) {
