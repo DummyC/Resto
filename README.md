@@ -7,3 +7,5 @@ resto self-checkout system
 + nickname change
 + exception handling
 + undo option
++ discount codes
++ secret dev menu
