@@ -2,10 +2,11 @@
 
 school project
 resto self-checkout system
+spaghetti
 
 ### to do (maybe)
-+ nickname change
-+ exception handling
-+ undo option
-+ discount codes
-+ secret dev menu
++ [x] nickname change
++ [x] exception handling
++ [ ] undo option
++ [x] discount codes
++ [ ] secret dev menu
