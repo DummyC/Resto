@@ -8,6 +8,8 @@ public class App {
     static int itemPrices[] = {249, 274, 299, 199, 124, 149, 249, 99, 199, 74};
     static int orderList[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static String paymentMethods[] = {"GCash", "Cash"};
+    static String discountCodes[] = {"DUMMY50", "EVERYTHINGFREE"};
+    static boolean isCoupon;
 
     static void threadSleep(int millis) {
         try {
@@ -30,7 +32,6 @@ public class App {
     }
 
     static void showTitle() {
-
         System.out.println("\u001B[35m");
         System.out.println("  _____                                  _       _____           _        ");
         System.out.println(" |  __ \\                                ( )     |  __ \\         | |       ");
@@ -42,6 +43,7 @@ public class App {
         System.out.println("                                   |___/                                  ");
         System.out.println("\u001B[37m");
     }
+
     static void listMenu() {
         clearScreen();
         showTitle();
@@ -51,42 +53,53 @@ public class App {
         for(int i = 0; i < 10; i++) {
             System.out.println(i+1 + " - " + itemNames[i] + " - " + itemPrices[i] + " Pesos");
         }
-        listCart();
+        listCart(false);
         getInput();
     }
 
-    static void listCart() {
+    static void listCart(boolean isCheckout) {
         System.out.println("\nCart: ");
         for(int i = 0; i < 10; i++) {
             if(orderList[i] > 0){
                 System.out.println(orderList[i] + "x " + itemNames[i] + " = " + itemPrices[i]*orderList[i] + " Pesos");
             }
         }
-        System.out.println("\nSubtotal: " + priceTotal + " Pesos");
+        if(isCheckout == false){
+            System.out.println("\nSubtotal: " + priceTotal + " Pesos");
+        } else {
+            System.out.println("\nTotal: " + priceTotal + " Pesos");
+        }
+        if(isCoupon == true){
+            System.out.println("COUPON ACTIVATED!");
+        }
     }
 
     static void getInput() {
         Scanner scan = new Scanner(System.in);
-
-        System.out.print("Enter your selection (1-10, clear or checkout): ");
-        String choicePre = scan.nextLine();
+        System.out.print("Enter your selection (1-10) \ntype \"clear\" to clear cart \ntype \"menu\" to change name \ntype \"checkout\" to finish order: ");
+        String choicePre = scan.next();
         try {
             int choice = Integer.parseInt(choicePre);
-            choice -= 1;
+            choice--;
             System.out.print("Enter desired quantity: ");
             int quantity = scan.nextInt();
             addItem(choice, quantity);
         } catch(Exception e) {
-            if("checkout".equals(choicePre)){
-                checkOut();
-            } else if("clear".equals(choicePre)){
+            if("clear".equalsIgnoreCase(choicePre)){
                 clearCart();
+            } else if("checkout".equalsIgnoreCase(choicePre)){
+                checkOut();
+                selectPayment();
+            } else if("menu".equalsIgnoreCase(choicePre)){
+                clearScreen();
+                getName();
             } else {
                 System.out.println("Invalid Selection!");
                 threadSleep(2000);
                 listMenu();
             }
         }
+
     }
 
     static void addItem(int choice, int quantity) {
@@ -110,45 +123,94 @@ public class App {
         clearScreen();
         showTitle();
         System.out.println("Checkout Page");
-        listCart();
+        listCart(true);
+        if(priceTotal == 0 && isCoupon == false){
+            System.out.println("There is nothing in the cart. Returning... ");
+            threadSleep(3000);
+            listMenu();
+        }
+    }
+
+    static void selectPayment() {
+        Scanner scan = new Scanner(System.in);
         System.out.println("\nAvailable Payment Methods:");
         for(int i = 0; i < 2; i++){
             System.out.println(i+1 + " - " + paymentMethods[i]);
         }
-        System.out.print("Enter your desired payment method: ");
-        int choice = scan.nextInt();
-        if(choice == 1){
-            checkOutGCash();
-        } else if(choice == 2){
-            checkOutCash();
-        } else {
-            System.out.println("Invalid Selection!");
-            threadSleep(2000);
-            checkOut();
-        }
+        System.out.print("Enter your desired payment method (1 or 2)\ntype \"return\" to go back \ntype \"coupon\" if you want to use a coupon: ");
+        String choicePre = scan.next();
+        try{
+            int choice = Integer.parseInt(choicePre);
+            if(choice == 1){
+                checkOutGCash();
+            } else if(choice == 2){
+                checkOutCash();
+            } else {
+                System.out.println("Invalid Selection!");
+                threadSleep(2000);
+                checkOut();
+                selectPayment();
+            }
+        } catch(Exception e){
+            if("return".equalsIgnoreCase(choicePre)){
+                listMenu();
+            } else if("coupon".equalsIgnoreCase(choicePre)){
+                addCoupon();
+            } else {
+                System.out.println("Invalid Selection!");
+                threadSleep(2000);
+                checkOut();
+                selectPayment();
+            }
 
         System.out.println("\nThank you for your order.\nPlease wait until your order is ready");
-
         threadSleep(3000);
+        isCoupon = false;
         priceTotal = 0;
         for(int i = 0; i < 10; i++){
             orderList[i] = 0;
-        }
-        
+            }
+            
         System.out.print("\nReturning to main menu in: ");
         for(int i = 5; i > 0; i--){
             System.out.print(i);
             threadSleep(1000);
             System.out.print("\033[1D\033[0K");
-        }
-
+            }
         clearScreen();
         getName();
+        }    
+    }
+
+    static void addCoupon() {
+        Scanner scan = new Scanner(System.in);
+        checkOut();
+        System.out.print("Please enter your coupon code: ");
+        String inputCoupon = scan.next();
+        
+        if(discountCodes[0].equals(inputCoupon)){
+            System.out.println("Congrats, your order is 50% off!");
+            int tempPriceTotal = priceTotal;
+            tempPriceTotal = tempPriceTotal / 2;
+            priceTotal = tempPriceTotal;
+            isCoupon = true;
+        } else if(discountCodes[1].equals(inputCoupon)){
+            System.out.println("Congrats, your entire order is free of charge!");
+            priceTotal = 0;
+            isCoupon = true;
+        } else {
+            System.out.println("Invalid Coupon!");
+            threadSleep(4000);
+            addCoupon();
+        }
+        threadSleep(4000);
+        checkOut();
+        selectPayment();
     }
 
     static void checkOutGCash() {
         Scanner scan = new Scanner(System.in);
-        System.out.println("Please send the exact amount of " + priceTotal + " Pesos to '0997 940 5620'");
+        System.out.println("Please send the exact amount of " + priceTotal + " Pesos to '0912 345 6789'");
         System.out.print("Enter the reference number in the receipt to verify transaction: ");
         long refNum = Long.parseLong(scan.nextLine());
         System.out.println("Verifying transcation...");
@@ -160,6 +222,12 @@ public class App {
         Scanner scan = new Scanner(System.in);
         System.out.print("Enter cash amount: ");
         int cash = scan.nextInt();
+        if(cash < priceTotal){
+            System.out.println("Please pay the correct amount!");
+            threadSleep(5000);
+            checkOut();
+            selectPayment();
+        }
         int change = cash - priceTotal;
         System.out.println("Change: " + change);
     }
