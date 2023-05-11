@@ -186,7 +186,7 @@ public class App {
         Scanner scan = new Scanner(System.in);
         checkOut();
         if(isCoupon == true){
-            System.out.println("You can't activate more than 1 coupon");
+            System.out.println("You can't activate more than 1 coupon at a time.");
             threadSleep(4000);
             checkOut();
             selectPayment();
