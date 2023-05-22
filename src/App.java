@@ -7,7 +7,7 @@ public class App {
                         "French Fries (regular)", "Onion Rings (regular)", "Caesar Salad", "Soft Drink (regular)", "Chocolate Milkshake", "Vanilla Ice Cream"}; 
     static int itemPrices[] = {249, 274, 299, 199, 124, 149, 249, 99, 199, 74};
     static int orderList[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static String paymentMethods[] = {"GCash", "Cash"};
+    static String paymentMethods[] = {"GCash", "PayMaya", "Cash"};
     static String discountCodes[] = {"DUMMY50", "EVERYTHINGFREE"};
     static boolean isCoupon;
 
@@ -134,16 +134,27 @@ public class App {
     static void selectPayment() {
         Scanner scan = new Scanner(System.in);
         System.out.println("\nAvailable Payment Methods:");
-        for(int i = 0; i < 2; i++){
+        for(int i = 0; i < 3; i++){
             System.out.println(i+1 + " - " + paymentMethods[i]);
         }
-        System.out.print("Enter your desired payment method (1 or 2)\ntype \"return\" to go back \ntype \"coupon\" if you want to use a coupon: ");
+        System.out.print("Enter your desired payment method (1 - 3)\ntype \"return\" to go back \ntype \"coupon\" if you want to use a coupon: ");
         String choicePre = scan.next();
         try{
             int choice = Integer.parseInt(choicePre);
             if(choice == 1){
+                clearScreen();
+                showTitle();
+                listCart(true);
                 checkOutGCash();
             } else if(choice == 2){
+                clearScreen();
+                showTitle();
+                listCart(true);
+                checkOutMaya();
+            } else if(choice == 3){
+                clearScreen();
+                showTitle();
+                listCart(true);
                 checkOutCash();
             } else {
                 System.out.println("Invalid Selection!");
@@ -216,6 +227,18 @@ public class App {
 
     static void checkOutGCash() {
         Scanner scan = new Scanner(System.in);
+        System.out.println("\nGCash Payment:");
+        System.out.println("Please send the exact amount of " + priceTotal + " Pesos to '0912 345 6789'");
+        System.out.print("Enter the reference number in the receipt to verify transaction: ");
+        long refNum = Long.parseLong(scan.nextLine());
+        System.out.println("Verifying transcation...");
+        threadSleep(4000);
+        System.out.println("Transaction verified");
+    }
+
+    static void checkOutMaya() {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("\nPayMaya Payment:");
         System.out.println("Please send the exact amount of " + priceTotal + " Pesos to '0912 345 6789'");
         System.out.print("Enter the reference number in the receipt to verify transaction: ");
         long refNum = Long.parseLong(scan.nextLine());
@@ -226,6 +249,7 @@ public class App {
 
     static void checkOutCash() {
         Scanner scan = new Scanner(System.in);
+        System.out.println("\nCash Payment:");
         System.out.print("Enter cash amount: ");
         int cash = scan.nextInt();
         if(cash < priceTotal){
