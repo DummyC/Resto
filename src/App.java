@@ -1,3 +1,4 @@
+// https://github.com/DummyC/Resto
 import java.util.Scanner;
 
 public class App {
@@ -173,7 +174,10 @@ public class App {
                 checkOut();
                 selectPayment();
             }
+        }    
+    }
 
+    static void orderComplete() {
         System.out.println("\nThank you for your order.\nPlease wait until your order is ready");
         threadSleep(3000);
         isCoupon = false;
@@ -190,7 +194,6 @@ public class App {
             }
         clearScreen();
         getName();
-        }    
     }
 
     static void addCoupon() {
@@ -230,10 +233,11 @@ public class App {
         System.out.println("\nGCash Payment:");
         System.out.println("Please send the exact amount of " + priceTotal + " Pesos to '0912 345 6789'");
         System.out.print("Enter the reference number in the receipt to verify transaction: ");
-        long refNum = Long.parseLong(scan.nextLine());
+        long refNum = Long.parseLong(scan.nextLine()); //just for show
         System.out.println("Verifying transcation...");
         threadSleep(4000);
         System.out.println("Transaction verified");
+        orderComplete();
     }
 
     static void checkOutMaya() {
@@ -245,6 +249,7 @@ public class App {
         System.out.println("Verifying transcation...");
         threadSleep(4000);
         System.out.println("Transaction verified");
+        orderComplete();
     }
 
     static void checkOutCash() {
@@ -260,6 +265,7 @@ public class App {
         }
         int change = cash - priceTotal;
         System.out.println("Change: " + change);
+        orderComplete();
     }
 
     public static void main(String[] args) throws Exception {
