@@ -184,14 +184,14 @@ public class App {
         priceTotal = 0;
         for(int i = 0; i < 10; i++){
             orderList[i] = 0;
-            }
+        }
             
         System.out.print("\nReturning to main menu in: ");
         for(int i = 5; i > 0; i--){
             System.out.print(i);
             threadSleep(1000);
             System.out.print("\033[1D\033[0K");
-            }
+        }
         clearScreen();
         getName();
     }
